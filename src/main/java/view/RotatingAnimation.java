@@ -16,7 +16,7 @@ public class RotatingAnimation extends Transition {
         this.ball = ball;
         this.centerX = centerX;
         this.centerY = centerY;
-        this.setCycleDuration(javafx.util.Duration.millis(1000000000));
+        this.setCycleDuration(javafx.util.Duration.millis(1000));
         this.ballOrbit = centerY - (int) ball.getCenterY();
         this.setCycleCount(-1);
     }

@@ -1,53 +1,60 @@
 package view;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import model.Ball;
+import model.Game;
 
-public class Game extends Application {
-    private final int SCENE_SIZE = 600;
-    private final int middle = SCENE_SIZE / 2;
+public class GameMenu extends Application {
+    public final static int SCENE_SIZE = 600;
+    public final static int middle = SCENE_SIZE / 2;
     public AnchorPane anchorPane;
     private Ball central;
+
+    public static void endGame() {
+        System.out.println("end game");
+        Pane losePane = new Pane();
+        Label label = new Label("You lost!");
+        label.setLayoutX(middle);
+        label.setLayoutX(middle);
+        losePane.getChildren().add(label);
+        LoginMenu.stage.setScene(new Scene(losePane, SCENE_SIZE, SCENE_SIZE));
+        LoginMenu.stage.show();
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
         LoginMenu.stage = stage;
-        Pane gamePane = FXMLLoader.load(Game.class.getResource("game.fxml"));
+        Pane gamePane = FXMLLoader.load(GameMenu.class.getResource("game.fxml"));
 
         this.central = new Ball(150);
         central.setCenterX(middle);
         central.setCenterY(middle - 100);
         gamePane.getChildren().add(central);
+        Game game = new Game(10);
+        game.initBall(gamePane);
 
         central.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case SPACE:
+                        if (game.isGameOver()) {
+                            return;
+                        }
                         System.out.println("space");
-                        Ball ball = new Ball(10);
-                        gamePane.getChildren().add(ball);
-                        ball.setCenterX(central.getCenterX());
-                        ball.setCenterY(SCENE_SIZE - 10);
-                        ShootingAnimation shootingAnimation = new ShootingAnimation(gamePane, central, ball);
+                        ShootingAnimation shootingAnimation = new ShootingAnimation(
+                                game, gamePane, central, game.getCurrentBall());
                         shootingAnimation.play();
+                        game.nextBall();
+                        game.initBall(gamePane);
                         break;
                 }
             }
