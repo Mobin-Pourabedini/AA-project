@@ -38,7 +38,7 @@ public class GameMenu extends Application {
         central.setCenterX(middle);
         central.setCenterY(middle - 100);
         gamePane.getChildren().add(central);
-        Game game = new Game(10);
+        Game game = new Game(10, 5);
         game.initBall(gamePane);
 
         central.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -55,6 +55,26 @@ public class GameMenu extends Application {
                         shootingAnimation.play();
                         game.nextBall();
                         game.initBall(gamePane);
+                        break;
+                    case X:
+                        System.out.println("x");
+                        game.flipDirection();
+                        break;
+                    case V:
+                        System.out.println("v");
+                        game.increaseSpeed();
+                        break;
+                    case C:
+                        System.out.println("c");
+                        game.decreaseSpeed();
+                        break;
+                    case A:
+                        System.out.println("a");
+                        game.setAngle(game.getAngle() - 5);
+                        break;
+                    case D:
+                        System.out.println("d");
+                        game.setAngle(game.getAngle() + 5);
                         break;
                 }
             }
