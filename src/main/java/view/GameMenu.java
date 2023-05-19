@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameController;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +10,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.Aa;
 import model.Ball;
 import model.Game;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameMenu extends Application {
     public final static int SCENE_SIZE = 600;
@@ -38,7 +43,7 @@ public class GameMenu extends Application {
         central.setCenterX(middle);
         central.setCenterY(middle - 100);
         gamePane.getChildren().add(central);
-        Game game = new Game(10, 5);
+        Game game = new GameController().createGame(Aa.getGameMap(0), gamePane, 5, 5);
         game.initBall(gamePane);
 
         central.setOnKeyPressed(new EventHandler<KeyEvent>() {

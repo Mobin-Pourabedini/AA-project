@@ -33,7 +33,7 @@ public class AvatarPartition extends VBox {
         this.getChildren().add(exitButton);
         Button removeButton = new Button("delete account and exit");
         removeButton.setOnAction(event -> {
-            Aa.users.remove(user);
+            Aa.getUsers().remove(user);
             try {
                 ProfileMenu.exit();
             } catch (IOException e) {

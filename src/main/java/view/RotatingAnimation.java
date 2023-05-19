@@ -10,7 +10,8 @@ public class RotatingAnimation extends Transition {
     private Ball ball;
     private int centerX, centerY;
     private double ballOrbit;
-    private int movingStep = 0, MOVING_POINTS = 2520;
+    private int movingStep = 0;
+    public static int MOVING_POINTS = 2520;
     private Game game;
 
     public RotatingAnimation(Game game, Pane pane, Ball ball, int centerX, int centerY) {
