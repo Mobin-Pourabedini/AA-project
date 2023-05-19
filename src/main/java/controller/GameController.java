@@ -6,14 +6,14 @@ import model.Ball;
 import model.Game;
 import view.RotatingAnimation;
 
+import java.util.List;
 import java.util.Map;
 
 public class GameController {
-    public Game createGame(Map<Ball, Integer> map, Pane  pane, int totalBallCount, int movementSpeed) {
+    public Game createGame(List<Integer> list, Pane  pane, int totalBallCount, int movementSpeed) {
         Game game = new Game(totalBallCount, movementSpeed);
-        for (Map.Entry<Ball, Integer> entry : map.entrySet()) {
-            Ball ball = entry.getKey();
-            int pos = entry.getValue();
+        for (int pos : list) {
+            Ball ball = new Ball(Aa.BALL_RADIOS);
             pane.getChildren().add(ball);
             moveBall(pos, ball, Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y,
                     Aa.CENTRAL_BALL_RADIOS + Aa.BALL_RADIOS);

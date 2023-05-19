@@ -1,45 +1,27 @@
 package view;
 
+import com.google.gson.Gson;
 import model.Aa;
 import model.Ball;
 import model.Data;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class main {
-    public static void main(String[] args) {
-        Map<Ball, Integer> map = new HashMap<>();
-        map.put(new Ball(Aa.BALL_RADIOS), 100);
-        map.put(new Ball(Aa.BALL_RADIOS), 200);
-        map.put(new Ball(Aa.BALL_RADIOS), 800);
-        map.put(new Ball(Aa.BALL_RADIOS), 1100);
-        map.put(new Ball(Aa.BALL_RADIOS), 1200);
-        map.put(new Ball(Aa.BALL_RADIOS), 1700);
-        map.put(new Ball(Aa.BALL_RADIOS), 2000);
+    public static void main(String[] args) throws IOException {
         Data data = new Data();
-        data.addGameMap(map);
-        map.clear();
-        map.put(new Ball(Aa.BALL_RADIOS), 100);
-        map.put(new Ball(Aa.BALL_RADIOS), 200);
-        map.put(new Ball(Aa.BALL_RADIOS), 300);
-        map.put(new Ball(Aa.BALL_RADIOS), 400);
-        map.put(new Ball(Aa.BALL_RADIOS), 1200);
-        map.put(new Ball(Aa.BALL_RADIOS), 1300);
-        map.put(new Ball(Aa.BALL_RADIOS), 1400);
-        map.put(new Ball(Aa.BALL_RADIOS), 1500);
-        map.put(new Ball(Aa.BALL_RADIOS), 1600);
-        data.addGameMap(map);
-        map.clear();
-        map.put(new Ball(Aa.BALL_RADIOS), 100);
-        map.put(new Ball(Aa.BALL_RADIOS), 200);
-        map.put(new Ball(Aa.BALL_RADIOS), 300);
-        map.put(new Ball(Aa.BALL_RADIOS), 400);
-        map.put(new Ball(Aa.BALL_RADIOS), 500);
-        map.put(new Ball(Aa.BALL_RADIOS), 600);
-        map.put(new Ball(Aa.BALL_RADIOS), 700);
-        map.put(new Ball(Aa.BALL_RADIOS), 800);
-        map.put(new Ball(Aa.BALL_RADIOS), 900);
-        data.addGameMap(map);
+        List<Integer> list = List.of(100, 200, 800, 1100, 1200, 1700, 2000);
+        data.addGameMap(list);
+        list = List.of(100, 200, 300, 400, 1200, 1300, 1400, 1500, 1600);
+        data.addGameMap(list);
+        list = List.of(100, 200, 300, 400, 500, 600, 700, 800, 900);
+        data.addGameMap(list);
+        Gson gson = new Gson();
+        FileWriter fileWriter = new FileWriter("src/main/resources/data/data.json");
+        String jsonToBePushed = gson.toJson(data);
+        fileWriter.write(jsonToBePushed);
+        fileWriter.close();
     }
 }

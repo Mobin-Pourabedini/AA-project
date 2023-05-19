@@ -10,7 +10,7 @@ public class Aa {
     public static final int SCENE_SIZE = 600;
     public static final int CENTRAL_BALL_X = SCENE_SIZE / 2, CENTRAL_BALL_Y = SCENE_SIZE / 2 - 100;
     private static List<User> users = new ArrayList<>();
-    private static List<Map<Ball, Integer>> gameMaps = new ArrayList<>();
+    private static List<List<Integer>> gameMaps = new ArrayList<>();
 
 
     public static void addUser(User user) {
@@ -21,11 +21,15 @@ public class Aa {
         return users;
     }
 
-    public static void addGameMap(Map<Ball, Integer> map) {
+    public static void addGameMap(List<Integer> map) {
         gameMaps.add(map);
     }
 
-    public static Map<Ball, Integer> getGameMap(int index) {
+    public static List<List<Integer>> getGameMaps() {
+        return gameMaps;
+    }
+
+    public static List<Integer> getGameMap(int index) {
         return gameMaps.get(index);
     }
 
@@ -36,5 +40,13 @@ public class Aa {
             }
         }
         return null;
+    }
+
+    public static void setUsers(List<User> users) {
+        Aa.users = users;
+    }
+
+    public static void setGameMaps(List<List<Integer>> gameMaps) {
+        Aa.gameMaps = gameMaps;
     }
 }
