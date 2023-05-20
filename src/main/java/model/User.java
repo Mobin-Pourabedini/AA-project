@@ -7,14 +7,12 @@ import javafx.scene.paint.Paint;
 public class User {
     private String username;
     private String password;
-    private Paint avatar;
+    private String avatarPath;
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.avatar = new ImagePattern(
-                new Image(ProfilePic.class.getResource(
-                        "/images/Untitled design (0).png").toExternalForm()));
+        this.avatarPath = "/images/Untitled design (0).png";
     }
 
     public String getUsername() {
@@ -22,14 +20,16 @@ public class User {
     }
 
     public Paint getAvatar() {
-        return avatar;
+        return new ImagePattern(
+                new Image(ProfilePic.class.getResource(
+                        this.avatarPath).toExternalForm()));
     }
 
     public boolean isPasswordCorrect(String password) {
         return this.password.equals(password);
     }
 
-    public void setProfilePic(Paint paint) {
-        this.avatar = paint;
+    public void setProfilePic(String avatarPath) {
+        this.avatarPath = avatarPath;
     }
 }

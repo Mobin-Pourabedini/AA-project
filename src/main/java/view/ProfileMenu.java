@@ -1,5 +1,6 @@
 package view;
 
+import controller.DataUtilities;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,9 +59,14 @@ public class ProfileMenu extends Application {
             Rectangle rectangle = new Rectangle(200, 300, paint);
             final int index = i;
             rectangle.setOnMouseClicked(event -> {
-                loggedInUser.setProfilePic(paint);
+                loggedInUser.setProfilePic("/images/Untitled design ("+index+").png");
                 profilePic.setFill(paint);
                 System.out.println("clicked" + index);
+                try {
+                    DataUtilities.pushData();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 popup.hide();
             });
             hBox.getChildren().add(rectangle);

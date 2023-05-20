@@ -1,5 +1,6 @@
 package view;
 
+import controller.DataUtilities;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,10 @@ public class LoginMenu extends Application {
         stage.show();
     }
 
+    public void initialize() throws IOException {
+        DataUtilities.fetchData();
+    }
+
     public static void main(String[] args) {
         launch();
     }
@@ -41,7 +46,7 @@ public class LoginMenu extends Application {
     }
 
     @FXML
-    protected void register() {
+    protected void register() throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
         if (username.isEmpty() || password.isEmpty()) {
@@ -53,6 +58,7 @@ public class LoginMenu extends Application {
             return;
         }
         model.Aa.addUser(new model.User(username, password));
+        DataUtilities.pushData();
         welcomeText.setText("User registered successfully!");
     }
 

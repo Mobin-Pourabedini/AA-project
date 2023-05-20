@@ -1,0 +1,17 @@
+Button{
+    -fx-min-height: 300;
+    -fx-max-height: 300;
+    -fx-max-width: 300;
+    -fx-min-width: 300;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 20px;
+    -fx-background-color: #ff5f00;
+    -fx-border-radius: 20;
+    -fx-border-color: #000000;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+}
+Button:hover {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #a23e01;
+}

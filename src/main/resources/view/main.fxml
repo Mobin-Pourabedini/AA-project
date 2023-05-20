@@ -9,11 +9,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="view.MainMenu"
-            prefHeight="600.0" prefWidth="900.0">
-    <GridPane fx:id="grid" alignment="CENTER">
-        <Button fx:id="startNewGame" text="Start new game" onAction="#startGame" alignment="TOP_RIGHT"/>
-        <Button fx:id="loadGame" text="Continue playing" onAction="#loadGame" alignment="TOP_LEFT"/>
-        <Button fx:id="profileButton" text="Profile" onAction="#enterProfile" alignment="BOTTOM_LEFT"/>
-        <Button fx:id="settingsButton" text="Settings" onAction="#enterSettings" alignment="BOTTOM_RIGHT"/>
-    </GridPane>
+            prefHeight="600.0" prefWidth="900.0"
+            stylesheets="@../css/style.css">
+
 </AnchorPane>

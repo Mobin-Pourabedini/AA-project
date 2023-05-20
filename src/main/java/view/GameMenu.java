@@ -1,5 +1,6 @@
 package view;
 
+import controller.DataUtilities;
 import controller.GameController;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -9,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import model.Aa;
 import model.Ball;
@@ -36,16 +38,16 @@ public class GameMenu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        DataUtilities.fetchData();
         LoginMenu.stage = stage;
         Pane gamePane = FXMLLoader.load(GameMenu.class.getResource("game.fxml"));
 
-        this.central = new Ball(150);
+        this.central = new Ball(Aa.CENTRAL_BALL_RADIOS);
         central.setCenterX(middle);
         central.setCenterY(middle - 100);
         gamePane.getChildren().add(central);
-        Game game = new GameController().createGame(Aa.getGameMap(0), gamePane, 5, 5);
+        Game game = new GameController().createGame(Aa.getGameMap(2), gamePane, 5, 5);
         game.initBall(gamePane);
-
         central.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -63,15 +65,15 @@ public class GameMenu extends Application {
                         break;
                     case X:
                         System.out.println("x");
-                        game.flipDirection();
+                        new GameController().reverse(game, gamePane);
                         break;
                     case V:
                         System.out.println("v");
-                        game.increaseSpeed();
+                        new GameController().speedUp(game, gamePane);
                         break;
                     case C:
                         System.out.println("c");
-                        game.decreaseSpeed();
+                        new GameController().speedDown(game, gamePane);
                         break;
                     case A:
                         System.out.println("a");

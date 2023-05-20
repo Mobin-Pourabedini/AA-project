@@ -1,11 +1,12 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Data {
-    private List<List<Integer>> gameMaps;
-    private List<User> users;
+    private List<List<Integer>> gameMaps = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     public Data() {
         gameMaps = new java.util.ArrayList<>();
