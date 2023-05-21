@@ -1,5 +1,6 @@
 package model;
 
+import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import view.GameMenu;
@@ -20,6 +21,7 @@ public class Game {
     private Timeline fadeTimeline;
     private Timeline reverseTimeline;
     private Timeline swellTimeline;
+    private Timeline degreeTimeline;
 
     public Game(int totalBallCount, int movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -32,6 +34,7 @@ public class Game {
 
     public void addBall(Ball ball) {
         balls.add(ball);
+        GameMenu.addToProgress();
     }
 
     public List<Ball> getBalls() {
@@ -115,6 +118,10 @@ public class Game {
         return swellTimeline;
     }
 
+    public Timeline getDegreeTimeline() {
+        return degreeTimeline;
+    }
+
     public void setFadeTimeline(Timeline fadeTimeline) {
         this.fadeTimeline = fadeTimeline;
     }
@@ -125,5 +132,9 @@ public class Game {
 
     public void setSwellTimeline(Timeline swellTimeline) {
         this.swellTimeline = swellTimeline;
+    }
+
+    public void setDegreeTimeline(Timeline degreeTimeline) {
+        this.degreeTimeline = degreeTimeline;
     }
 }

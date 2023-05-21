@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Aa {
-    public static final int CENTRAL_BALL_RADIOS = 120, BALL_RADIOS = 5;
+    public static final int CENTRAL_BALL_RADIOS = 80, BALL_RADIOS = 7;
     public static final int SCENE_SIZE = 600;
     public static final int CENTRAL_BALL_X = SCENE_SIZE / 2, CENTRAL_BALL_Y = SCENE_SIZE / 2 - 100;
     private static List<User> users = new ArrayList<>();
@@ -14,6 +14,7 @@ public class Aa {
     public static boolean isInPhase1 = false;
     public static boolean isInPhase2 = false;
     public static boolean isInPhase3 = false;
+    public static boolean isInPhase4 = false;
 
 
     public static void addUser(User user) {

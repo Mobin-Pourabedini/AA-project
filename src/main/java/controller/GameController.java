@@ -24,7 +24,7 @@ public class GameController {
             pane.getChildren().add(ball);
             moveBall(pos, ball, Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y,
                     Aa.CENTRAL_BALL_RADIOS + Aa.BALL_RADIOS + 50);
-            game.addBall(ball);
+            game.getBalls().add(ball);
         }
         RotatingAnimation animation = new RotatingAnimation(
                 game, pane, game.getBalls(), Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y);
@@ -68,24 +68,56 @@ public class GameController {
     }
 
     public void enterPhase2(Game game, Pane pane) {
-        Aa.isInPhase1 = false;
         Aa.isInPhase2 = true;
+        GameMenu.setPhaseLabel("Phase 2");
         game.setSwellTimeline(swellTimeline(game, pane));
         game.getSwellTimeline().play();
     }
 
     public void enterPhase3(Game game, Pane pane) {
-        Aa.isInPhase2 = false;
         Aa.isInPhase3 = true;
+        GameMenu.setPhaseLabel("Phase 3");
         game.setFadeTimeline(fadeTimeline(game, pane));
         game.getFadeTimeline().play();
+    }
+
+    public void enterPhase4(Game game, Pane pane) {
+        Aa.isInPhase4 = true;
+        GameMenu.setPhaseLabel("Phase 4");
+        game.setDegreeTimeline(degreeTimeline(game, pane));
+        game.getDegreeTimeline().play();
+    }
+
+    private Timeline degreeTimeline(Game game, Pane pane) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, new EventHandler() {
+            int movingStep = 0;
+            int sign = 120;
+
+            @Override
+            public void handle(Event event) {
+                movingStep += sign;
+                double degree = (double) movingStep / 100;
+                game.setAngle(degree);
+                GameMenu.setDegreeLabel("degree: " + degree);
+                System.out.println(degree);
+
+                if (movingStep >= 1500) {
+                    sign = -sign;
+                }
+                if (movingStep <= -1500) {
+                    sign = -sign;
+                }
+            }
+        }), new KeyFrame(Duration.millis(1000)));
+        timeline.setCycleCount(-1);
+        return timeline;
     }
 
     public Timeline reverseTimeline(Game game, Pane pane) {
         Random random = new Random();
         int millis = random.nextInt(4000, 6000);
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(millis), event -> {
-            if (!game.isGameOver())
+            if (!GameMenu.isGameOver())
                 reverse(game, pane);
         }));
         timeline.setOnFinished(event -> reverseTimeline(game, pane).play());
@@ -139,9 +171,6 @@ public class GameController {
 
             @Override
             public void handle(Event event) {
-                if (game.isGameOver()){
-                    return;
-                }
                 movingStep += sign;
 
                 for (Ball ball : game.getBalls()) {
@@ -179,5 +208,16 @@ public class GameController {
     public static boolean checkIntersection(Ball movingBall, Ball centerBall) {
         double distance = Math.sqrt(Math.pow(movingBall.getCenterX() - centerBall.getCenterX(), 2) + Math.pow(movingBall.getCenterY() - centerBall.getCenterY(), 2));
         return distance <= movingBall.getRadius() + centerBall.getRadius();
+    }
+
+    public void freeze(Game game, Pane gamePane) {
+        if (GameMenu.checkFreeze()) {
+            speedDown(game, gamePane);
+            speedDown(game, gamePane);
+            new Timeline(new KeyFrame(Duration.millis(5000), event -> {
+                speedUp(game, gamePane);
+                speedUp(game, gamePane);
+            })).play();
+        }
     }
 }

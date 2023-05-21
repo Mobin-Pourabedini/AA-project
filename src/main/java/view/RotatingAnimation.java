@@ -68,6 +68,9 @@ public class RotatingAnimation extends Transition {
 
     @Override
     protected void interpolate(double v) {
+        if (game.getBalls().size() > initMovingSteps.size()) {
+            return;
+        }
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
             int initMovingStep = initMovingSteps.get(i);
