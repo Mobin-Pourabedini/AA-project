@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameController;
 import javafx.animation.Transition;
 import javafx.scene.layout.Pane;
 import model.Aa;
@@ -38,24 +39,24 @@ public class ShootingAnimation extends Transition {
         fakeBall.setCenterX(Aa.CENTRAL_BALL_X);
         fakeBall.setCenterY(Aa.CENTRAL_BALL_Y);
         for (Ball ball: game.getBalls()) {
-            if (checkIntersection(movingBall, ball)) {
+            if (GameController.checkIntersection(movingBall, ball)) {
                 this.stop();
                 isDone = true;
-                GameMenu.endGame();
+                GameMenu.gameOver();
             }
         }
-        if (checkIntersection(movingBall, fakeBall)) {
+        if (GameController.checkIntersection(movingBall, fakeBall)) {
+            if (game.isLastBall(movingBall)) {
+                GameMenu.wonGame();
+            }
             game.addBall(movingBall);
             this.stop();
             isDone = true;
-            RotatingAnimation animation = new RotatingAnimation(game, pane, movingBall, (int) centerBall.getCenterX(), (int) centerBall.getCenterY());
-            movingBall.setAnimation(animation);
+            game.getAnimation().stop();
+            RotatingAnimation animation = new RotatingAnimation(
+                    game, pane, game.getBalls(), Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y);
             animation.play();
+            game.setAnimation(animation);
         }
-    }
-
-    private boolean checkIntersection(Ball movingBall, Ball centerBall) {
-        double distance = Math.sqrt(Math.pow(movingBall.getCenterX() - centerBall.getCenterX(), 2) + Math.pow(movingBall.getCenterY() - centerBall.getCenterY(), 2));
-        return distance <= movingBall.getRadius() + centerBall.getRadius();
     }
 }

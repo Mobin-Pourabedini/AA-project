@@ -1,0 +1,6 @@
+label{
+    -fx-min-width: 200;
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: center;
+}

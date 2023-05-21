@@ -3,31 +3,53 @@ package view;
 import javafx.animation.Transition;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import model.Aa;
 import model.Ball;
 import model.Game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RotatingAnimation extends Transition {
     private Pane pane;
-    private Ball ball;
+    private List<Ball> balls;
     private int centerX, centerY;
     private double ballOrbit;
-    private int initMovingStep = 0;
+    private List<Integer> initMovingSteps = new ArrayList<>();
     public static int MOVING_POINTS = 2520;
     private Game game;
-    private Line line;
     private int direction;
-    public RotatingAnimation(Game game, Pane pane, Ball ball, int centerX, int centerY) {
+    public RotatingAnimation(Game game, Pane pane, List<Ball> balls, int centerX, int centerY) {
         this.setInterpolator(javafx.animation.Interpolator.LINEAR);
         this.game = game;
         this.pane = pane;
-        this.ball = ball;
+        this.balls = balls;
         this.centerX = centerX;
         this.centerY = centerY;
         this.direction = game.getDirection();
-        this.line = new Line(ball.getCenterX(), ball.getCenterY(), centerX, centerY);
-        pane.getChildren().add(line);
-        this.setCycleDuration(javafx.util.Duration.millis((1.0 / (double) game.getMovementSpeed()) * 10000));
-        this.ballOrbit = Math.sqrt(Math.pow(ball.getCenterX() - centerX, 2) + Math.pow(ball.getCenterY() - centerY, 2));
+        for (Ball ball: balls) {
+            if (ball.getLine() == null) {
+                Line line = new Line(ball.getCenterX(), ball.getCenterY(), centerX, centerY);
+                ball.setLine(line);
+                pane.getChildren().add(line);
+            } else {
+                ball.getLine().setStartX(ball.getCenterX());
+                ball.getLine().setStartY(ball.getCenterY());
+                ball.getLine().setEndX(centerX);
+                ball.getLine().setEndY(centerY);
+            }
+        }
+        this.setCycleDuration(javafx.util.Duration.millis(10));
+        this.ballOrbit = Aa.BALL_RADIOS + Aa.CENTRAL_BALL_RADIOS + 50;
+        for (Ball ball: balls) {
+            int initMovingStep = getInitMovingStep(centerX, centerY, ball);
+            initMovingSteps.add(initMovingStep);
+        }
+        this.setCycleCount(-1);
+    }
+
+    private int getInitMovingStep(int centerX, int centerY, Ball ball) {
+        int initMovingStep = 0;
         for (int i = 1; i < MOVING_POINTS; i++) {
             double currentAlpha = initMovingStep * ( (2 * Math.PI) / MOVING_POINTS );
             double currentX = centerX + ballOrbit * Math.sin(currentAlpha);
@@ -41,25 +63,25 @@ public class RotatingAnimation extends Transition {
                 initMovingStep = i;
             }
         }
-        this.setCycleCount(-1);
+        return initMovingStep;
     }
 
     @Override
     protected void interpolate(double v) {
-        int movingStep = (((int) (v * MOVING_POINTS)) * direction) + initMovingStep;
-        movingStep = (movingStep + MOVING_POINTS) % MOVING_POINTS;
+        for (int i = 0; i < balls.size(); i++) {
+            Ball ball = balls.get(i);
+            int initMovingStep = initMovingSteps.get(i);
+            Line line = ball.getLine();
+            initMovingStep += game.getMovementSpeed() * direction;
+            initMovingStep = (initMovingStep + MOVING_POINTS) % MOVING_POINTS;
+            initMovingSteps.set(i, initMovingStep);
 
-        double angleAlpha = movingStep * ( (2 * Math.PI) / MOVING_POINTS );
+            double angleAlpha = initMovingStep * ((2 * Math.PI) / MOVING_POINTS);
 
-        moveBall(ball, centerX + ballOrbit * Math.sin(angleAlpha), centerY - ballOrbit * Math.cos(angleAlpha));
-        line.setStartX(ball.getCenterX());
-        line.setStartY(ball.getCenterY());
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        pane.getChildren().remove(line);
+            moveBall(ball, centerX + ballOrbit * Math.sin(angleAlpha), centerY - ballOrbit * Math.cos(angleAlpha));
+            line.setStartX(ball.getCenterX());
+            line.setStartY(ball.getCenterY());
+        }
     }
 
     private void moveBall(Ball ball, double v, double v1) {
