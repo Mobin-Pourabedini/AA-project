@@ -9,18 +9,19 @@ import model.Game;
 
 public class ShootingAnimation extends Transition {
     private Pane pane;
-    private Ball centerBall;
-    private Ball movingBall;
+    private Ball centerBall, movingBall;
     private model.Game game;
     private double degree;
     private boolean isDone = false;
+    private GameController controller;
 
-    public ShootingAnimation(Game game, Pane pane, Ball centerBall, Ball movingBall) {
+    public ShootingAnimation(GameController controller, Game game, Pane pane, Ball centerBall, Ball movingBall) {
         this.game = game;
         this.degree = game.getAngle();
         this.pane = pane;
         this.centerBall = centerBall;
         this.movingBall = movingBall;
+        this.controller = controller;
         this.setCycleDuration(javafx.util.Duration.millis(1));
         this.setCycleCount(-1);
     }
@@ -42,14 +43,15 @@ public class ShootingAnimation extends Transition {
             if (GameController.checkIntersection(movingBall, ball)) {
                 this.stop();
                 isDone = true;
-                GameMenu.gameOver();
+                controller.gameOver();
             }
         }
         if (GameController.checkIntersection(movingBall, fakeBall)) {
             if (game.isLastBall(movingBall)) {
-                GameMenu.wonGame();
+                controller.wonGame();
             }
             game.addBall(movingBall);
+            controller.addToProgress();
             this.stop();
             isDone = true;
             game.getAnimation().stop();

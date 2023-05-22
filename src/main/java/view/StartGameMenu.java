@@ -18,14 +18,20 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import model.User;
 
 import java.util.List;
 
 public class StartGameMenu extends Application {
+    private User loggedInUser;
     private List<Integer> ballPositions;
     private static Rectangle selectGameRectangle;
     public static int gameIndex = 0;
     private Slider difficultySlider, numberOfPinsSlider;
+
+    public StartGameMenu(User user) {
+        this.loggedInUser = user;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -71,10 +77,9 @@ public class StartGameMenu extends Application {
         Button startGameButton = new Button("start game");
         startGameButton.setOnMouseClicked(event -> {
             try {
-                GameMenu gameMenu = new GameMenu();
-                gameMenu.setDifficulty((int) this.difficultySlider.getValue());
-                gameMenu.setNumberOfPins((int) this.numberOfPinsSlider.getValue());
-                gameMenu.setGameIndex(gameIndex);
+                int difficulty = (int) this.difficultySlider.getValue();
+                int numberOfPins = (int) this.numberOfPinsSlider.getValue();
+                GameMenu gameMenu = new GameMenu(loggedInUser, difficulty, numberOfPins, gameIndex);
                 gameMenu.start(stage);
             } catch (Exception e) {
                 e.printStackTrace();

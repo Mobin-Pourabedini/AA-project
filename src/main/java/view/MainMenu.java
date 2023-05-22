@@ -57,7 +57,7 @@ public class MainMenu extends Application {
     }
 
     public void startGame() throws Exception {
-        StartGameMenu startGameMenu = new StartGameMenu();
+        StartGameMenu startGameMenu = new StartGameMenu(loggedInUser);
         startGameMenu.start(LoginMenu.stage);
     }
 }

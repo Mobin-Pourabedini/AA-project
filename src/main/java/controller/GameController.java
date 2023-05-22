@@ -4,7 +4,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.image.Image;
+import javafx.geometry.Insets;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -14,28 +18,133 @@ import javafx.util.Duration;
 import model.Aa;
 import model.Ball;
 import model.Game;
+import model.User;
 import view.GameMenu;
 import view.RotatingAnimation;
+import view.ShootingAnimation;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class GameController {
-    public Game createGame(List<Integer> list, Pane  pane, int totalBallCount, int movementSpeed) {
-        Game game = new Game(totalBallCount, movementSpeed);
+    private User loggedInUser;
+    private Game game;
+    private Pane gamePane;
+    private Media knifeEffect = new Media(getClass().getResource("/media/knifeEffect.mp3").toExternalForm());
+    private int remainingBalls;
+    private final int numberOfPins, difficulty, mapIndex;
+    private boolean gameOver = false;
+    private Ball central;
+    private GameMenu gameMenu;
+
+    public GameController(GameMenu gameMenu, User loggedInUser, Pane gamePane, int numberOfPins, int difficulty, int mapIndex) {
+        this.loggedInUser = loggedInUser;
+        this.gamePane = gamePane;
+        this.remainingBalls = numberOfPins;
+        this.numberOfPins = numberOfPins;
+        this.difficulty = difficulty;
+        this.mapIndex = mapIndex;
+        this.gameMenu = gameMenu;
+        this.game = createGame(2 * difficulty);
+    }
+
+    public Game createGame(int movementSpeed) {
+        List<Integer> list = Aa.getGameMap(mapIndex);
+        Game game = new Game(numberOfPins, movementSpeed);
         for (int pos : list) {
             Ball ball = new Ball(Aa.BALL_RADIOS);
-            pane.getChildren().add(ball);
+            gamePane.getChildren().add(ball);
             moveBall(pos, ball, Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y,
                     Aa.CENTRAL_BALL_RADIOS + Aa.BALL_RADIOS + 50);
             game.getBalls().add(ball);
         }
         RotatingAnimation animation = new RotatingAnimation(
-                game, pane, game.getBalls(), Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y);
+                game, gamePane, game.getBalls(), Aa.CENTRAL_BALL_X, Aa.CENTRAL_BALL_Y);
         animation.play();
         game.setAnimation(animation);
+        game.initBall(gamePane);
+        enterPhase1(game, gamePane);
         return game;
+    }
+
+    public Ball createCentralBall() {
+        Ball ball = new Ball(Aa.CENTRAL_BALL_RADIOS);
+        ball.setCenterX(Aa.CENTRAL_BALL_X);
+        ball.setCenterY(Aa.CENTRAL_BALL_Y);
+        GameController controller = this;
+        ball.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (gameOver) {
+                    return;
+                }
+                switch (keyEvent.getCode()) {
+                    case SPACE:
+                        System.out.println("space");
+                        if (game.isGameOver()) {
+                            return;
+                        }
+                        gameMenu.setRemainingBallsText("Remaining balls: " + --remainingBalls);
+                        System.out.println("space");
+                        MediaPlayer mediaPlayer = new MediaPlayer(knifeEffect);
+                        mediaPlayer.play();
+                        ShootingAnimation shootingAnimation = new ShootingAnimation(
+                                controller, game, gamePane, central, game.getCurrentBall());
+                        shootingAnimation.play();
+                        game.nextBall();
+                        game.initBall(gamePane);
+                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins && !Aa.isInPhase2) {
+                            enterPhase2(game, gamePane);
+                        }
+                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 2 && !Aa.isInPhase3) {
+                            enterPhase3(game, gamePane);
+                        }
+                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 3 && !Aa.isInPhase4) {
+                            enterPhase4(game, gamePane);
+                        }
+                        break;
+                    case TAB:
+                        System.out.println("tab");
+                        freeze(game, gamePane);
+                        break;
+                    case X:
+                        System.out.println("x");
+                        reverse(game, gamePane);
+                        break;
+                    case V:
+                        System.out.println("v");
+                        speedUp(game, gamePane);
+                        break;
+                    case C:
+                        System.out.println("c");
+                        speedDown(game, gamePane);
+                        break;
+                    case A:
+                        System.out.println("a");
+                        game.setAngle(game.getAngle() - 5);
+                        break;
+                    case D:
+                        System.out.println("d");
+                        game.setAngle(game.getAngle() + 5);
+                        break;
+                    case Q:
+                        System.out.println("q");
+                        enterPhase1(game, gamePane);
+                        break;
+                    case W:
+                        System.out.println("w");
+                        enterPhase2(game, gamePane);
+                        break;
+                    case E:
+                        System.out.println("e");
+                        enterPhase3(game, gamePane);
+                        break;
+
+                }
+            }
+        });
+        central = ball;
+        return ball;
     }
 
     public void reverse(Game game, Pane pane) {
@@ -74,21 +183,21 @@ public class GameController {
 
     public void enterPhase2(Game game, Pane pane) {
         Aa.isInPhase2 = true;
-        GameMenu.setPhaseLabel("Phase 2");
+        gameMenu.setPhaseLabel("Phase 2");
         game.setSwellTimeline(swellTimeline(game, pane));
         game.getSwellTimeline().play();
     }
 
     public void enterPhase3(Game game, Pane pane) {
         Aa.isInPhase3 = true;
-        GameMenu.setPhaseLabel("Phase 3");
+        gameMenu.setPhaseLabel("Phase 3");
         game.setFadeTimeline(fadeTimeline(game, pane));
         game.getFadeTimeline().play();
     }
 
     public void enterPhase4(Game game, Pane pane) {
         Aa.isInPhase4 = true;
-        GameMenu.setPhaseLabel("Phase 4");
+        gameMenu.setPhaseLabel("Phase 4");
         game.setDegreeTimeline(degreeTimeline(game, pane));
         game.getDegreeTimeline().play();
     }
@@ -103,7 +212,7 @@ public class GameController {
                 movingStep += sign;
                 double degree = (double) movingStep / 100;
                 game.setAngle(degree);
-                GameMenu.setDegreeLabel("degree: " + degree);
+                gameMenu.setDegreeLabel("degree: " + degree);
                 System.out.println(degree);
 
                 if (movingStep >= 1500) {
@@ -122,7 +231,7 @@ public class GameController {
         Random random = new Random();
         int millis = random.nextInt(4000, 6000);
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(millis), event -> {
-            if (!GameMenu.isGameOver())
+            if (!gameOver)
                 reverse(game, pane);
         }));
         timeline.setOnFinished(event -> reverseTimeline(game, pane).play());
@@ -150,7 +259,7 @@ public class GameController {
                     for (int j = i + 1; j < game.getBalls().size(); j++) {
                         Ball otherBall = game.getBalls().get(j);
                         if (checkIntersection(ball, otherBall)) {
-                            GameMenu.gameOver();
+                            gameOver();
                             isDone = true;
                             break outer;
                         }
@@ -216,27 +325,53 @@ public class GameController {
     }
 
     public void freeze(Game game, Pane gamePane) {
-        if (GameMenu.checkFreeze()) {
+        if (gameMenu.checkFreeze()) {
             Media media = new Media(getClass().getResource("/media/freezeEffect.mp3").toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
             speedDown(game, gamePane);
             speedDown(game, gamePane);
-            Paint prevPaint = GameMenu.getCentral().getFill();
-            GameMenu.getCentral().setFill(Color.BLUE);
+            Paint prevPaint = central.getFill();
+            central.setFill(Color.BLUE);
             for (Ball ball: game.getBalls()) {
                 ball.setFill(Color.BLUE);
             }
             new Timeline(new KeyFrame(Duration.millis(5000), event -> {
-                if (!GameMenu.isGameOver()) {
+                if (!gameOver) {
                     speedUp(game, gamePane);
                     speedUp(game, gamePane);
-                    GameMenu.getCentral().setFill(prevPaint);
+                    central.setFill(prevPaint);
                     for (Ball ball : game.getBalls()) {
                         ball.setFill(prevPaint);
                     }
                 }
             })).play();
         }
+    }
+
+    public void gameOver() {
+        gamePane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        if (game.getFadeTimeline() != null) {
+            game.getFadeTimeline().stop();
+            for (Ball ball: game.getBalls()) {
+                ball.setOpacity(1);
+                ball.getLine().setOpacity(1);
+            }
+        }
+        if (game.getSwellTimeline() != null) {
+            game.getSwellTimeline().stop();
+        }
+        game.getAnimation().pause();
+        gameOver = true;
+        System.out.println("game over");
+    }
+
+    public void wonGame() {
+        gamePane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        System.out.println("won game");
+    }
+
+    public void addToProgress() {
+        gameMenu.addToProgress();
     }
 }

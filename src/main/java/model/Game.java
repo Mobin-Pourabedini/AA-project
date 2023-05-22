@@ -12,7 +12,7 @@ import java.util.Map;
 public class Game {
 
     private int totalBallCount;
-    private int currentBallCount;
+    private int currentBallCount = 0;
     private int direction = 1, movementSpeed;
     private double angle = 0;
     List<Ball> balls = new java.util.ArrayList<>();
@@ -34,7 +34,6 @@ public class Game {
 
     public void addBall(Ball ball) {
         balls.add(ball);
-        GameMenu.addToProgress();
     }
 
     public List<Ball> getBalls() {
