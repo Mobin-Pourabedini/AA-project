@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.Aa;
 
 import java.io.IOException;
 
@@ -21,6 +22,7 @@ public class LoginMenu extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 900, 600);
         stage.setTitle("Hello!");
         stage.setScene(scene);
+        Aa.playMusic();
         stage.show();
     }
 
@@ -71,8 +73,7 @@ public class LoginMenu extends Application {
             welcomeText.setText("Username or password is incorrect!");
             return;
         }
-        ProfileMenu.loggedInUser = user;
-        ProfileMenu profileMenu = new ProfileMenu();
-        profileMenu.start(LoginMenu.stage);
+        MainMenu mainMenu = new MainMenu(user);
+        mainMenu.start(LoginMenu.stage);
     }
 }

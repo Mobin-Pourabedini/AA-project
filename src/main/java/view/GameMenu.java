@@ -12,6 +12,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -24,13 +26,14 @@ import static controller.GameController.checkIntersection;
 
 public class GameMenu extends Application {
     public final static int SCENE_SIZE = 600, middle = SCENE_SIZE / 2;
-    private Ball central;
-    private static int difficulty = 2, numberOfPins = 8, mapIndex = 2, remainingBalls;
+    private static Ball central;
+    private static int difficulty = 2, numberOfPins = 16, mapIndex = 0, remainingBalls;
     private static Pane gamePane;
     private static Game game;
     private static boolean gameOver = false;
     private static ProgressBar freezeBar;
     private static Label freezePower, phaseLabel, degreeLabel;
+    private static Media knifeEffect;
 
     public static void gameOver() {
         gamePane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -101,6 +104,8 @@ public class GameMenu extends Application {
         degreeLabel.setLayoutY(Aa.SCENE_SIZE - 50);
         degreeLabel.setFont(new Font("Arial", 20));
         gamePane.getChildren().add(degreeLabel);
+        knifeEffect = new Media(getClass().getResource("/media/knifeEffect.mp3").toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(knifeEffect);
 
         central.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -115,6 +120,8 @@ public class GameMenu extends Application {
                         }
                         remainingBallsText.setText("Remaining balls: " + --remainingBalls);
                         System.out.println("space");
+                        MediaPlayer mediaPlayer = new MediaPlayer(knifeEffect);
+                        mediaPlayer.play();
                         ShootingAnimation shootingAnimation = new ShootingAnimation(
                                 game, gamePane, central, game.getCurrentBall());
                         shootingAnimation.play();
@@ -175,6 +182,10 @@ public class GameMenu extends Application {
         stage.setScene(scene);
         central.requestFocus();
         stage.show();
+    }
+
+    public static Ball getCentral() {
+        return central;
     }
 
     public void setDifficulty(int value) {

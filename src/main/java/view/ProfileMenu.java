@@ -1,6 +1,7 @@
 package view;
 
 import controller.DataUtilities;
+import controller.ProfileController;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,59 +24,22 @@ import java.io.IOException;
 
 public class ProfileMenu extends Application {
     public VBox avatarPartition;
-    public static User loggedInUser;
-    private static ProfilePic profilePic;
+    private final User loggedInUser;
+    private ProfileController controller;
 
-    public static void exit() throws IOException {
-        new LoginMenu().start(LoginMenu.stage);
+    public ProfileMenu(User user) {
+        loggedInUser = user;
     }
-
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(ProfileMenu.class.getResource("profile.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        this.controller = new ProfileController(loggedInUser);
+        VBox avatarPartition = new VBox();
+        Scene scene = new Scene(avatarPartition);
+        AvatarPartition avatar = this.controller.createAvatarPartition();
+        avatarPartition.getChildren().add(avatar);
         stage.setTitle("Profile");
         stage.setScene(scene);
         stage.show();
-    }
-
-    @FXML
-    public void initialize() {
-        AvatarPartition avatar = new AvatarPartition(loggedInUser);
-        profilePic = avatar.getProfilePic();
-        avatarPartition.getChildren().add(avatar);
-    }
-
-    public static void getPaint() {
-        Popup popup = new Popup();
-        VBox vBox = new VBox();
-        vBox.getChildren().add(new Label("choose your avatar"));
-        HBox hBox = new HBox();
-
-        for (int i = 0; i < 6; i++) {
-            Paint paint = new ImagePattern(new Image(ProfileMenu.class.getResource(
-                    "/images/Untitled design ("+i+").png").toExternalForm()));
-            Rectangle rectangle = new Rectangle(200, 300, paint);
-            final int index = i;
-            rectangle.setOnMouseClicked(event -> {
-                loggedInUser.setProfilePic("/images/Untitled design ("+index+").png");
-                profilePic.setFill(paint);
-                System.out.println("clicked" + index);
-                try {
-                    DataUtilities.pushData();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                popup.hide();
-            });
-            hBox.getChildren().add(rectangle);
-        }
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(hBox);
-        scrollPane.setPrefSize(600, 300);
-        vBox.getChildren().add(scrollPane);
-        popup.getContent().add(vBox);
-        popup.show(LoginMenu.stage);
     }
 }

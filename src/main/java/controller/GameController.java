@@ -4,7 +4,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import model.Aa;
 import model.Ball;
@@ -212,11 +217,25 @@ public class GameController {
 
     public void freeze(Game game, Pane gamePane) {
         if (GameMenu.checkFreeze()) {
+            Media media = new Media(getClass().getResource("/media/freezeEffect.mp3").toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
             speedDown(game, gamePane);
             speedDown(game, gamePane);
+            Paint prevPaint = GameMenu.getCentral().getFill();
+            GameMenu.getCentral().setFill(Color.BLUE);
+            for (Ball ball: game.getBalls()) {
+                ball.setFill(Color.BLUE);
+            }
             new Timeline(new KeyFrame(Duration.millis(5000), event -> {
-                speedUp(game, gamePane);
-                speedUp(game, gamePane);
+                if (!GameMenu.isGameOver()) {
+                    speedUp(game, gamePane);
+                    speedUp(game, gamePane);
+                    GameMenu.getCentral().setFill(prevPaint);
+                    for (Ball ball : game.getBalls()) {
+                        ball.setFill(prevPaint);
+                    }
+                }
             })).play();
         }
     }

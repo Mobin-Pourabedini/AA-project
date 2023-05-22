@@ -8,13 +8,19 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.User;
 
 public class MainMenu extends Application {
     public Button startNewGame;
     public Button loadGame;
     public Button profileButton;
     public Button settingsButton;
+    private User loggedInUser;
     public GridPane grid;
+
+    public MainMenu(User user) {
+        loggedInUser = user;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -31,6 +37,14 @@ public class MainMenu extends Application {
         });
         Button loadGameButton = new Button("Continue playing");
         Button profileButton = new Button("Profile");
+        profileButton.setOnAction((ActionEvent event) -> {
+            try {
+                ProfileMenu profileMenu = new ProfileMenu(loggedInUser);
+                profileMenu.start(LoginMenu.stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         Button settingsButton = new Button("Settings");
         grid.add(startNewGameButton, 0, 0);
         grid.add(loadGameButton, 1, 0);

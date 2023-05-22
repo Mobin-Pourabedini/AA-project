@@ -1,5 +1,8 @@
 package model;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,9 @@ public class Aa {
     public static boolean isInPhase2 = false;
     public static boolean isInPhase3 = false;
     public static boolean isInPhase4 = false;
+
+    private static Media media = new Media(Aa.class.getResource("/media/music0.mp3").toString());
+    private static MediaPlayer mediaPlayer = new MediaPlayer(media);
 
 
     public static void addUser(User user) {
@@ -52,5 +58,25 @@ public class Aa {
 
     public static void setGameMaps(List<List<Integer>> gameMaps) {
         Aa.gameMaps = gameMaps;
+    }
+
+    public static void playMusic() {
+        mediaPlayer.setCycleCount(-1);
+        mediaPlayer.play();
+    }
+
+    public static void setMusic(int index) {
+        mediaPlayer.stop();
+        media = new Media(Aa.class.getResource("/media/music" + index + ".mp3").toExternalForm());
+        mediaPlayer = new MediaPlayer(media);
+        playMusic();
+    }
+
+    public static void muteMusic() {
+        mediaPlayer.setMute(true);
+    }
+
+    public static void unmuteMusic() {
+        mediaPlayer.setMute(false);
     }
 }
