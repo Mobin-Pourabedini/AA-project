@@ -5,23 +5,22 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.Popup;
 import javafx.util.Duration;
 import model.Aa;
 import model.Ball;
 import model.Game;
 import model.User;
-import view.GameMenu;
-import view.RotatingAnimation;
-import view.ShootingAnimation;
+import view.*;
 
 import java.util.List;
 import java.util.Random;
@@ -33,7 +32,7 @@ public class GameController {
     private Media knifeEffect = new Media(getClass().getResource("/media/knifeEffect.mp3").toExternalForm());
     private int remainingBalls;
     private final int numberOfPins, difficulty, mapIndex;
-    private boolean gameOver = false;
+    private boolean gameOver = false, isPaused = false;
     private Ball central;
     private GameMenu gameMenu;
 
@@ -75,7 +74,7 @@ public class GameController {
         ball.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (gameOver) {
+                if (gameOver || isPaused) {
                     return;
                 }
                 switch (keyEvent.getCode()) {
@@ -105,7 +104,21 @@ public class GameController {
                         break;
                     case TAB:
                         System.out.println("tab");
-                        freeze(game, gamePane);
+                        Timeline freeze = freeze(game, gamePane);
+                        if (freeze == null){
+                            break;
+                        }
+                        game.setFreezeTimeline(freeze);
+                        freeze.play();
+                        break;
+                    case ESCAPE:
+                        System.out.println("escape");
+                        isPaused = true;
+                        if (game.getAnimation() != null)game.getAnimation().pause();
+                        if (game.getSwellTimeline() != null)game.getSwellTimeline().pause();
+                        if (game.getFadeTimeline() != null)game.getFadeTimeline().pause();
+                        if (game.getFreezeTimeline() != null)game.getFreezeTimeline().pause();
+                        pause();
                         break;
                     case X:
                         System.out.println("x");
@@ -148,6 +161,9 @@ public class GameController {
     }
 
     public void reverse(Game game, Pane pane) {
+        if (isPaused || gameOver) {
+            return;
+        }
         System.out.println("reverse");
         game.flipDirection();
         game.getAnimation().stop();
@@ -231,7 +247,7 @@ public class GameController {
         Random random = new Random();
         int millis = random.nextInt(4000, 6000);
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(millis), event -> {
-            if (!gameOver)
+            if (!gameOver && !isPaused)
                 reverse(game, pane);
         }));
         timeline.setOnFinished(event -> reverseTimeline(game, pane).play());
@@ -324,28 +340,33 @@ public class GameController {
         return distance <= movingBall.getRadius() + centerBall.getRadius();
     }
 
-    public void freeze(Game game, Pane gamePane) {
+    public Timeline freeze(Game game, Pane gamePane) {
         if (gameMenu.checkFreeze()) {
-            Media media = new Media(getClass().getResource("/media/freezeEffect.mp3").toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.play();
-            speedDown(game, gamePane);
-            speedDown(game, gamePane);
             Paint prevPaint = central.getFill();
-            central.setFill(Color.BLUE);
-            for (Ball ball: game.getBalls()) {
-                ball.setFill(Color.BLUE);
-            }
-            new Timeline(new KeyFrame(Duration.millis(5000), event -> {
-                if (!gameOver) {
+            return new Timeline(new KeyFrame(Duration.ZERO, event -> {
+                Media media = new Media(getClass().getResource("/media/freezeEffect.mp3").toString());
+                MediaPlayer mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
+                speedDown(game, gamePane);
+                speedDown(game, gamePane);
+                central.setFill(Color.BLUE);
+                for (Ball ball: game.getBalls()) {
+                    ball.setFill(Color.BLUE);
+                    ball.getLine().setFill(Color.BLUE);
+                }
+            }), new KeyFrame(Duration.millis(5000), event -> {
+                if (!gameOver && !isPaused) {
                     speedUp(game, gamePane);
                     speedUp(game, gamePane);
                     central.setFill(prevPaint);
                     for (Ball ball : game.getBalls()) {
                         ball.setFill(prevPaint);
+                        ball.getLine().setFill(prevPaint);
                     }
                 }
-            })).play();
+            }));
+        } else {
+            return null;
         }
     }
 
@@ -373,5 +394,67 @@ public class GameController {
 
     public void addToProgress() {
         gameMenu.addToProgress();
+    }
+
+    public void pause() {
+        Popup popup = new Popup();
+        popup.setHideOnEscape(false);
+        VBox pane = new VBox(new Label("Paused"));
+        pane.setMinWidth(300);
+        pane.setMinHeight(300);
+        pane.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        Button resume = new Button("Resume");
+        resume.setOnAction(event -> {
+            resume();
+            popup.hide();
+        });
+        pane.getChildren().add(resume);
+        Button mute = new Button("Mute");
+        mute.setOnAction(event -> {
+            Aa.muteMusic();
+        });
+        pane.getChildren().add(mute);
+        Button unmute = new Button("Unmute");
+        unmute.setOnAction(event -> {
+            Aa.unmuteMusic();
+        });
+        pane.getChildren().add(unmute);
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll("music0", "music1", "music2", "music3");
+        comboBox.setValue("music0");
+        comboBox.setOnAction(event -> {
+            Aa.setMusic(comboBox.getValue().charAt(comboBox.getValue().length() - 1) - '0');
+        });
+        pane.getChildren().add(comboBox);
+        popup.getContent().add(pane);
+        Button exit = new Button("Exit");
+        exit.setOnAction(event -> {
+            StartGameMenu startGameMenu = new StartGameMenu(loggedInUser);
+            try {
+                startGameMenu.start(LoginMenu.stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            popup.hide();
+        });
+        pane.getChildren().add(exit);
+        Button save = new Button("Save");
+
+        popup.setX(450);
+        popup.setY(200);
+        popup.show(LoginMenu.stage);
+    }
+
+    public void resume() {
+        if (game.getAnimation() != null)game.getAnimation().play();
+        if (game.getSwellTimeline() != null)game.getSwellTimeline().play();
+        if (game.getFadeTimeline() != null)game.getFadeTimeline().play();
+        if (game.getFreezeTimeline() != null)game.getFreezeTimeline().play();
+        isPaused = false;
+    }
+
+    public void saveGame() {
+
     }
 }

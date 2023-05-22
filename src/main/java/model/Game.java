@@ -22,6 +22,7 @@ public class Game {
     private Timeline reverseTimeline;
     private Timeline swellTimeline;
     private Timeline degreeTimeline;
+    private Timeline freezeTimeline;
 
     public Game(int totalBallCount, int movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -121,6 +122,10 @@ public class Game {
         return degreeTimeline;
     }
 
+    public Timeline getFreezeTimeline() {
+        return freezeTimeline;
+    }
+
     public void setFadeTimeline(Timeline fadeTimeline) {
         this.fadeTimeline = fadeTimeline;
     }
@@ -135,5 +140,9 @@ public class Game {
 
     public void setDegreeTimeline(Timeline degreeTimeline) {
         this.degreeTimeline = degreeTimeline;
+    }
+
+    public void setFreezeTimeline(Timeline freezeTimeline) {
+        this.freezeTimeline = freezeTimeline;
     }
 }

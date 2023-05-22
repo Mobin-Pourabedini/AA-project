@@ -22,6 +22,8 @@ public class Aa {
     private static Media media = new Media(Aa.class.getResource("/media/music0.mp3").toString());
     private static MediaPlayer mediaPlayer = new MediaPlayer(media);
 
+    private static SavedGame savedGame;
+
 
     public static void addUser(User user) {
         users.add(user);
