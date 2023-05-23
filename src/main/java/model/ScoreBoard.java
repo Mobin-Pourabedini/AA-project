@@ -1,5 +1,6 @@
 package model;
 
+import controller.DataUtilities;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -10,35 +11,67 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ScoreBoard {
-    private final Map<User, Integer> easyScores = new HashMap<>();
-    private final Map<User, Integer> mediumScores = new HashMap<>();
-    private final Map<User, Integer> hardScores = new HashMap<>();
+    private Map<String, Integer> easyScores = new HashMap<>();
+    private Map<String, Integer> mediumScores = new HashMap<>();
+    private Map<String, Integer> hardScores = new HashMap<>();
     private VBox vBox;
+    private int difficulty;
 
     public ScoreBoard() {
         this.vBox = new VBox();
     }
 
-    public void addScore(User user, int score, int difficulty) {
+    public Map<String, Integer> getEasyScores() {
+        return easyScores;
+    }
+
+    public Map<String, Integer> getMediumScores() {
+        return mediumScores;
+    }
+
+    public Map<String, Integer> getHardScores() {
+        return hardScores;
+    }
+
+    public void setEasyScores(Map<String, Integer> easyScores) {
+        this.easyScores = easyScores;
+    }
+
+    public void setMediumScores(Map<String, Integer> mediumScores) {
+        this.mediumScores = mediumScores;
+    }
+
+    public void setHardScores(Map<String, Integer> hardScores) {
+        this.hardScores = hardScores;
+    }
+
+    public void addScore(User user, int score, int difficulty) throws IOException {
         switch (difficulty) {
             case 1:
-                easyScores.put(user, score);
+                score = Math.max(score, easyScores.getOrDefault(user.getUsername(), 0));
+                easyScores.put(user.getUsername(), score);
                 break;
             case 2:
-                mediumScores.put(user, score);
+                score = Math.max(score, easyScores.getOrDefault(user.getUsername(), 0));
+                mediumScores.put(user.getUsername(), score);
                 break;
             case 3:
-                hardScores.put(user, score);
+                score = Math.max(score, easyScores.getOrDefault(user.getUsername(), 0));
+                hardScores.put(user.getUsername(), score);
                 break;
         }
+        getScoreBoard(difficulty);
+        DataUtilities.pushData();
     }
 
     public VBox getScoreBoard(int difficulty) {
+        this.difficulty = difficulty;
         this.vBox.getChildren().clear();
-        Map<User, Integer> scores;
+        Map<String, Integer> scores;
         switch (difficulty) {
             case 1:
                 scores = easyScores;
@@ -65,11 +98,12 @@ public class ScoreBoard {
             }
         });
         scoreBoard.getChildren().add(comboBox);
-        List<User> users = new ArrayList<>(scores.keySet());
-        Collections.sort(users, Comparator.comparingInt(scores::get).reversed());
+        List<String> usernames = new ArrayList<>(scores.keySet());
+        Collections.sort(usernames, Comparator.comparingInt(scores::get).reversed());
+        List<User> users = usernames.stream().map(Aa::getUserByUsername).toList();
         int index = 1;
         for (User user : users) {
-            scoreBoard.getChildren().add(formatUser(user, index++));
+            scoreBoard.getChildren().add(formatUser(user, index++, difficulty));
             if (index > 10)break;
         }
         scoreBoard.setBackground(new Background(new BackgroundFill(Color.CYAN, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -77,7 +111,19 @@ public class ScoreBoard {
         return scoreBoard;
     }
 
-    private HBox formatUser(User user, int index) {
+    private HBox formatUser(User user, int index, int difficulty) {
+        Map<String, Integer> scores;
+        switch (difficulty) {
+            case 1:
+                scores = easyScores;
+                break;
+            case 2:
+                scores = mediumScores;
+                break;
+            default:
+                scores = hardScores;
+                break;
+        }
         HBox userBox = new HBox();
         Label rank = new Label(String.valueOf(index));
         rank.setFont(new Font("Arial", 20));
@@ -93,7 +139,7 @@ public class ScoreBoard {
         userBox.getChildren().add(username);
         username.setMinWidth(80);
         username.setMaxWidth(80);
-        Label label = new Label(String.valueOf(easyScores.get(user)));
+        Label label = new Label(String.valueOf(scores.get(user.getUsername())));
         label.setFont(new Font("Arial", 20));
         label.setAlignment(javafx.geometry.Pos.CENTER);
         label.setMinWidth(80);

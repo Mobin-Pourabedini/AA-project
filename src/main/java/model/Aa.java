@@ -4,6 +4,7 @@ import controller.GameController;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import view.GameMenu;
+import view.MainMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +24,10 @@ public class Aa {
 
     private static GameController gameController;
 
+
     private static Media media = new Media(Aa.class.getResource("/media/music0.mp3").toString());
     private static MediaPlayer mediaPlayer = new MediaPlayer(media);
+    private static ScoreBoard scoreBoard = new ScoreBoard();
 
 
     public static void addUser(User user) {
@@ -58,6 +61,10 @@ public class Aa {
             }
         }
         return null;
+    }
+
+    public static ScoreBoard getScoreBoard() {
+        return scoreBoard;
     }
 
     public static void setUsers(List<User> users) {

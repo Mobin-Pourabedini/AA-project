@@ -40,7 +40,7 @@ public class StartGameMenu extends Application {
         HBox hBox = new HBox();
         selectGameRectangle = new Rectangle(200, 200);
         selectGameRectangle.setOnMouseClicked(event -> getGame());
-        selectGameRectangle.setFill(new ImagePattern(Loader.getImage("/images/map2.png")));
+        selectGameRectangle.setFill(new ImagePattern(Loader.getImage("/images/map0.png")));
         hBox.getChildren().add(selectGameRectangle);
         GridPane gridPane = new GridPane();
         Label difficultyLabel = new Label("difficulty: 2");

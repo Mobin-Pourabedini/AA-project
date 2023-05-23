@@ -13,6 +13,8 @@ import model.Aa;
 import model.ScoreBoard;
 import model.User;
 
+import java.io.IOException;
+
 public class MainMenu extends Application {
     public Button startNewGame;
     public Button loadGame;
@@ -20,9 +22,14 @@ public class MainMenu extends Application {
     public Button settingsButton;
     private User loggedInUser;
     public GridPane grid;
+    public static ScoreBoard scoreBoard = Aa.getScoreBoard();
 
     public MainMenu(User user) {
         loggedInUser = user;
+    }
+
+    public static void setScoreBoard(ScoreBoard scoreBoard) {
+        MainMenu.scoreBoard = scoreBoard;
     }
 
     @Override
@@ -75,14 +82,6 @@ public class MainMenu extends Application {
         grid.add(loadGameButton, 1, 0);
         grid.add(profileButton, 0, 1);
         grid.add(settingsButton, 1, 1);
-        ScoreBoard scoreBoard = new ScoreBoard();
-        scoreBoard.addScore(loggedInUser, 100, 1);
-        scoreBoard.addScore(Aa.getUserByUsername("Mazdak"), 200, 1);
-        scoreBoard.addScore(Aa.getUserByUsername("Mehrdad"), 300, 1);
-        scoreBoard.addScore(Aa.getUserByUsername("Mohammad"), 400, 1);
-        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 1);
-        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 2);
-        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 3);
         grid.add(scoreBoard.getScoreBoard(1), 2, 0, 1, 2);
         pane.getChildren().add(grid);
         Scene scene = new Scene(pane);
@@ -93,5 +92,9 @@ public class MainMenu extends Application {
     public void startGame() throws Exception {
         StartGameMenu startGameMenu = new StartGameMenu(loggedInUser);
         startGameMenu.start(LoginMenu.stage);
+    }
+
+    public static ScoreBoard getScoreBoard() {
+        return scoreBoard;
     }
 }

@@ -15,6 +15,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import model.Aa;
@@ -23,6 +24,7 @@ import model.Game;
 import model.User;
 import view.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -37,6 +39,7 @@ public class GameController {
     private Ball central;
     private GameMenu gameMenu;
     private double freezePower = 0.0;
+    private int score;
 
     public GameController(GameMenu gameMenu, User loggedInUser, Pane gamePane, int numberOfPins, int difficulty, int mapIndex) {
         this.loggedInUser = loggedInUser;
@@ -245,7 +248,11 @@ public class GameController {
                     for (int j = i + 1; j < game.getBalls().size(); j++) {
                         Ball otherBall = game.getBalls().get(j);
                         if (checkIntersection(ball, otherBall)) {
-                            gameOver();
+                            try {
+                                gameOver();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                             isDone = true;
                             break outer;
                         }
@@ -342,7 +349,10 @@ public class GameController {
         }
     }
 
-    public void gameOver() {
+    public void gameOver() throws IOException {
+        Aa.isInPhase2 = false;
+        Aa.isInPhase3 = false;
+        Aa.isInPhase4 = false;
         gamePane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         if (game.getFadeTimeline() != null) {
             game.getFadeTimeline().stop();
@@ -357,11 +367,39 @@ public class GameController {
         game.getAnimation().pause();
         gameOver = true;
         System.out.println("game over");
+        endGame();
     }
 
-    public void wonGame() {
+    public void wonGame() throws IOException {
         gamePane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        Aa.isInPhase2 = false;
+        Aa.isInPhase3 = false;
+        Aa.isInPhase4 = false;
         System.out.println("won game");
+        endGame();
+    }
+
+    public void endGame() throws IOException {
+        Label label = new Label("Score: " + score + "\npress enter to continue");
+        label.setFont(new Font("Arial", 20));
+        label.setLayoutX(Aa.SCENE_SIZE / 2 - 100);
+        label.setLayoutY(Aa.SCENE_SIZE / 2 - 50);
+        label.setOpacity(0.9);
+        label.setTextFill(Color.color(0.9, 0.65, 0.05));
+        MainMenu.getScoreBoard().addScore(loggedInUser, score, difficulty);
+        DataUtilities.pushScoreBoard();
+        gamePane.getChildren().add(label);
+        gamePane.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        StartGameMenu menu = new StartGameMenu(loggedInUser);
+                        try {
+                            menu.start(LoginMenu.stage);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+        gamePane.requestFocus();
     }
 
     public void addToProgress() {
@@ -407,6 +445,9 @@ public class GameController {
         exit.setOnAction(event -> {
             StartGameMenu startGameMenu = new StartGameMenu(loggedInUser);
             try {
+                Aa.isInPhase2 = false;
+                Aa.isInPhase3 = false;
+                Aa.isInPhase4 = false;
                 startGameMenu.start(LoginMenu.stage);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -466,5 +507,10 @@ public class GameController {
         if (game.getFadeTimeline() != null)game.getFadeTimeline().play();
         if (game.getFreezeTimeline() != null)game.getFreezeTimeline().play();
         isPaused = false;
+    }
+
+    public void addToScore() {
+        score += 10;
+        gameMenu.setScoreLabel("Score: " + score);
     }
 }

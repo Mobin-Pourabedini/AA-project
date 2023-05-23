@@ -27,7 +27,7 @@ public class GameMenu extends Application {
     private int  remainingBalls;
     private Pane gamePane;
     private ProgressBar freezeBar;
-    private Label freezePower, phaseLabel, degreeLabel, remainingBallsText;
+    private Label freezePower, phaseLabel, degreeLabel, remainingBallsText, scoreLabel;
 
     public GameMenu(User loggedInUser, int difficulty, int numberOfPins, int gameIndex) {
         this.gamePane = new Pane();
@@ -36,6 +36,10 @@ public class GameMenu extends Application {
         this.remainingBalls = numberOfPins;
         this.central = controller.createCentralBall();
         gamePane.getChildren().add(central);
+        this.scoreLabel = new Label("Score: 0");
+        scoreLabel.setLayoutX(Aa.SCENE_SIZE - 100);scoreLabel.setLayoutY(50);
+        scoreLabel.setFont(new Font("Arial", 20));
+        gamePane.getChildren().add(scoreLabel);
         this.remainingBallsText = new Label("Remaining balls: " + remainingBalls);
         remainingBallsText.setLayoutX(10);remainingBallsText.setLayoutY(20);
         remainingBallsText.setFont(new Font("Arial", 20));
@@ -111,6 +115,10 @@ public class GameMenu extends Application {
 
     public void setRemainingBallsText(String text) {
         remainingBallsText.setText(text);
+    }
+
+    public void setScoreLabel(String text) {
+        scoreLabel.setText(text);
     }
 
 }

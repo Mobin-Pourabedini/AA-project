@@ -7,6 +7,8 @@ import model.Aa;
 import model.Ball;
 import model.Game;
 
+import java.io.IOException;
+
 public class ShootingAnimation extends Transition {
     private Pane pane;
     private Ball centerBall, movingBall;
@@ -43,14 +45,23 @@ public class ShootingAnimation extends Transition {
             if (GameController.checkIntersection(movingBall, ball)) {
                 this.stop();
                 isDone = true;
-                controller.gameOver();
+                try {
+                    controller.gameOver();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         if (GameController.checkIntersection(movingBall, fakeBall)) {
             if (game.isLastBall(movingBall)) {
-                controller.wonGame();
+                try {
+                    controller.wonGame();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
             game.addBall(movingBall);
+            controller.addToScore();
             controller.addToProgress();
             this.stop();
             isDone = true;

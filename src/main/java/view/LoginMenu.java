@@ -28,6 +28,7 @@ public class LoginMenu extends Application {
 
     public void initialize() throws IOException {
         DataUtilities.fetchData();
+        DataUtilities.fetchScoreBoard();
     }
 
     public static void main(String[] args) {
