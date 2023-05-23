@@ -8,12 +8,15 @@ public class User {
     private String username;
     private String password;
     private String avatarPath;
-    String shootingKey, freezingKey, pauseKey;
+    private String shootingKey , freezingKey , pauseKey ;
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.avatarPath = "/images/Untitled design (0).png";
+        this.shootingKey = "Space";
+        this.freezingKey = "Tab";
+        this.pauseKey = "Esc";
     }
 
     public String getUsername() {

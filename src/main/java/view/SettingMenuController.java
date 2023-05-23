@@ -6,6 +6,8 @@ import javafx.scene.control.ComboBox;
 import model.Aa;
 import model.User;
 
+import java.io.IOException;
+
 public class SettingMenuController {
     public ComboBox musicInd;
     public ComboBox shootingKey;
@@ -35,18 +37,18 @@ public class SettingMenuController {
         Aa.setMusic(index);
     }
 
-    public void setShootingKey(ActionEvent event) {
+    public void setShootingKey(ActionEvent event) throws IOException {
         String keyStr = (String) shootingKey.getValue();
         controller.setShootingKey(keyStr);
     }
 
-    public void setFreezingKey(ActionEvent event) {
-        String keyStr = (String) shootingKey.getValue();
+    public void setFreezingKey(ActionEvent event) throws IOException {
+        String keyStr = (String) freezingKey.getValue();
         controller.setFreezingKey(keyStr);
     }
 
-    public void setPauseKey(ActionEvent event) {
-        String keyStr = (String) shootingKey.getValue();
+    public void setPauseKey(ActionEvent event) throws IOException {
+        String keyStr = (String) pauseKey.getValue();
         controller.setPauseKey(keyStr);
     }
 }

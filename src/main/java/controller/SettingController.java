@@ -1,8 +1,11 @@
 package controller;
 
+import model.Data;
 import model.User;
 import view.LoginMenu;
 import view.MainMenu;
+
+import java.io.IOException;
 
 public class SettingController {
     private final User loggedInUser;
@@ -21,15 +24,18 @@ public class SettingController {
     }
 
 
-    public void setShootingKey(String keyStr) {
+    public void setShootingKey(String keyStr) throws IOException {
         loggedInUser.setShootingKey(keyStr);
+        DataUtilities.pushData();
     }
 
-    public void setFreezingKey(String keyStr) {
+    public void setFreezingKey(String keyStr) throws IOException {
         loggedInUser.setFreezingKey(keyStr);
+        DataUtilities.pushData();
     }
 
-    public void setPauseKey(String keyStr) {
+    public void setPauseKey(String keyStr) throws IOException {
         loggedInUser.setPauseKey(keyStr);
+        DataUtilities.pushData();
     }
 }

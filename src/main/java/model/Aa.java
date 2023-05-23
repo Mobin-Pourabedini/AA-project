@@ -91,4 +91,8 @@ public class Aa {
     public static void saveGame(GameController controller) {
         gameController = controller;
     }
+
+    public static void removeUser(String username) {
+        users.remove(getUserByUsername(username));
+    }
 }

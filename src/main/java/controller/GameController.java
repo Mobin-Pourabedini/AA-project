@@ -191,7 +191,7 @@ public class GameController {
     private Timeline degreeTimeline(Game game, Pane pane) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, new EventHandler() {
             int movingStep = 0;
-            int sign = 120;
+            int sign = 90 + 30 * difficulty;
 
             @Override
             public void handle(Event event) {
@@ -311,6 +311,7 @@ public class GameController {
     }
 
     public Timeline freeze(Game game, Pane gamePane) {
+        int millis = -difficulty * 2000 + 9000;
         if (gameMenu.checkFreeze()) {
             freezePower = 0;
             Paint prevPaint = central.getFill();
@@ -325,7 +326,7 @@ public class GameController {
                     ball.setFill(Color.BLUE);
                     ball.getLine().setFill(Color.BLUE);
                 }
-            }), new KeyFrame(Duration.millis(5000), event -> {
+            }), new KeyFrame(Duration.millis(millis), event -> {
                 if (!gameOver && !isPaused) {
                     speedUp(game, gamePane);
                     speedUp(game, gamePane);

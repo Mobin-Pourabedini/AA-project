@@ -15,4 +15,9 @@ public class ProfilePic extends Circle {
             controller.getPaint();
         });
     }
+
+    public ProfilePic(User user) {
+        super(20);
+        super.setFill(user.getAvatar());
+    }
 }

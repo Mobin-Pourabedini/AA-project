@@ -1,6 +1,8 @@
 package model;
 
+import controller.DataUtilities;
 import controller.ProfileController;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -12,11 +14,11 @@ public class AvatarPartition extends VBox {
     private ProfilePic profilePic;
 
     public AvatarPartition(User user, ProfileController controller) {
-        this.setAlignment(javafx.geometry.Pos.CENTER);
+        this.setAlignment(Pos.CENTER);
         profilePic = new ProfilePic(user, controller);
         this.getChildren().add(profilePic);
         Label usernameLabel = new Label("username: " + user.getUsername());
-        usernameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        usernameLabel.setAlignment(Pos.CENTER);
         this.getChildren().add(usernameLabel);
         Button button = new Button("change avatar");
         button.setOnAction(event -> {
@@ -37,6 +39,8 @@ public class AvatarPartition extends VBox {
             Aa.getUsers().remove(user);
             try {
                 ProfileController.exit();
+                Aa.removeUser(user.getUsername());
+                DataUtilities.pushData();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

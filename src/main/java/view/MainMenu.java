@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.Aa;
+import model.ScoreBoard;
 import model.User;
 
 public class MainMenu extends Application {
@@ -74,6 +75,15 @@ public class MainMenu extends Application {
         grid.add(loadGameButton, 1, 0);
         grid.add(profileButton, 0, 1);
         grid.add(settingsButton, 1, 1);
+        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard.addScore(loggedInUser, 100, 1);
+        scoreBoard.addScore(Aa.getUserByUsername("Mazdak"), 200, 1);
+        scoreBoard.addScore(Aa.getUserByUsername("Mehrdad"), 300, 1);
+        scoreBoard.addScore(Aa.getUserByUsername("Mohammad"), 400, 1);
+        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 1);
+        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 2);
+        scoreBoard.addScore(Aa.getUserByUsername("Mohsen"), 500, 3);
+        grid.add(scoreBoard.getScoreBoard(1), 2, 0, 1, 2);
         pane.getChildren().add(grid);
         Scene scene = new Scene(pane);
         stage.setScene(scene);
