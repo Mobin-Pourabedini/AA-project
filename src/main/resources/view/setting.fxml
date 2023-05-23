@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="view.SettingMenuController"
+            prefHeight="400.0" prefWidth="600.0">
+    <VBox>
+        <children>
+            <Label text="Setting"/>
+            <Button text="Back" onAction="#back"/>
+            <Button text="mute music" onAction="#muteMusic"/>
+            <Button text="unmute music" onAction="#unmuteMusic"/>
+            <ComboBox onAction="#setMusic" fx:id="musicInd">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="music0"/>
+                        <String fx:value="music1"/>
+                        <String fx:value="music2"/>
+                        <String fx:value="music3"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <HBox>
+                <children>
+                    <Label text="shooting key"/>
+                    <ComboBox onAction="#setShootingKey" fx:id="shootingKey" value="Space">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Space"/>
+                                <String fx:value="Enter"/>
+                                <String fx:value="Shift"/>
+                                <String fx:value="Ctrl"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </children>
+            </HBox>
+            <HBox>
+                <children>
+                    <Label text="freeze key"/>
+                    <ComboBox onAction="#setFreezingKey" fx:id="freezingKey" value="Tab">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Tab"/>
+                                <String fx:value="Esc"/>
+                                <String fx:value="Alt"/>
+                                <String fx:value="W"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </children>
+            </HBox>
+            <HBox>
+                <children>
+                    <Label text="pause key"/>
+                    <ComboBox onAction="#setPauseKey" fx:id="pauseKey" value="Esc">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Esc"/>
+                                <String fx:value="Ctrl"/>
+                                <String fx:value="Alt"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </children>
+            </HBox>
+        </children>
+    </VBox>
+</AnchorPane>

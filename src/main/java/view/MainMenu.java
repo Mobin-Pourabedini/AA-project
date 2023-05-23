@@ -62,6 +62,14 @@ public class MainMenu extends Application {
             }
         });
         Button settingsButton = new Button("Settings");
+        settingsButton.setOnAction((ActionEvent event) -> {
+            try {
+                SettingMenu settingMenu = new SettingMenu(loggedInUser);
+                settingMenu.start(LoginMenu.stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         grid.add(startNewGameButton, 0, 0);
         grid.add(loadGameButton, 1, 0);
         grid.add(profileButton, 0, 1);

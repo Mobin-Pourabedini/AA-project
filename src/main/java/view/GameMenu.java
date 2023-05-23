@@ -72,43 +72,6 @@ public class GameMenu extends Application {
         this.central = controller.getCentral();
         this.remainingBalls = controller.getRemainingBalls();
         this.controller.resumeGame();
-//        gamePane.getChildren().add(central);
-//        this.remainingBallsText = new Label("Remaining balls: " + remainingBalls);
-//        remainingBallsText.setLayoutX(10);remainingBallsText.setLayoutY(20);
-//        remainingBallsText.setFont(new Font("Arial", 20));
-//        gamePane.getChildren().add(remainingBallsText);
-//        freezeBar = new ProgressBar();
-//        freezeBar.setLayoutX(70);freezeBar.setLayoutY(Aa.SCENE_SIZE - 20);
-//        freezeBar.setProgress(controller.getFreezePower());
-//        freezeBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-//        freezeBar.setStyle("-fx-accent: gold;");
-//        gamePane.getChildren().add(freezeBar);
-//        Label freezeLabel = new Label("Freeze");
-//        freezeLabel.setLayoutX(30);freezeLabel.setLayoutY(Aa.SCENE_SIZE - 50);
-//        freezeLabel.setFont(new Font("Arial", 20));
-//        gamePane.getChildren().add(freezeLabel);
-//        freezePower = new Label((int) (controller.getFreezePower()*100) + "%");
-//        freezePower.setLayoutX(10);freezePower.setLayoutY(Aa.SCENE_SIZE - 25);
-//        freezePower.setFont(new Font("Arial", 20));
-//        gamePane.getChildren().add(freezePower);
-//        phaseLabel = new Label("Phase " + controller.getPhase());
-//        if (controller.getPhase() >= 2) {
-//            controller.enterPhase2();
-//        }
-//        if (controller.getPhase() >= 3) {
-//            controller.enterPhase3();
-//        }
-//        if (controller.getPhase() >= 4) {
-//            controller.enterPhase4();
-//        }
-//        phaseLabel = new Label("Phase 1");
-//        phaseLabel.setLayoutX(Aa.SCENE_SIZE - 100);phaseLabel.setLayoutY(20);
-//        phaseLabel.setFont(new Font("Arial", 20));
-//        gamePane.getChildren().add(phaseLabel);
-//        degreeLabel = new Label("degree: 0");
-//        degreeLabel.setLayoutX(Aa.SCENE_SIZE - 120);degreeLabel.setLayoutY(Aa.SCENE_SIZE - 50);
-//        degreeLabel.setFont(new Font("Arial", 20));
-//        gamePane.getChildren().add(degreeLabel);
     }
 
     @Override

@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -72,88 +73,53 @@ public class GameController {
         ball.setCenterX(Aa.CENTRAL_BALL_X);
         ball.setCenterY(Aa.CENTRAL_BALL_Y);
         GameController controller = this;
+        String shootingKey = loggedInUser.getShootingKey();
+        String freezingKey = loggedInUser.getFreezingKey();
+        String pauseKey = loggedInUser.getPauseKey();
         ball.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (gameOver || isPaused) {
                     return;
                 }
-                switch (keyEvent.getCode()) {
-                    case SPACE:
-                        System.out.println("space");
-                        if (game.isGameOver()) {
-                            return;
-                        }
-                        gameMenu.setRemainingBallsText("Remaining balls: " + --remainingBalls);
-                        System.out.println("space");
-                        MediaPlayer mediaPlayer = new MediaPlayer(knifeEffect);
-                        mediaPlayer.play();
-                        ShootingAnimation shootingAnimation = new ShootingAnimation(
-                                controller, game, gamePane, central, game.getCurrentBall());
-                        shootingAnimation.play();
-                        game.nextBall();
-                        game.initBall(gamePane);
-                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins && !Aa.isInPhase2) {
-                            enterPhase2();
-                        }
-                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 2 && !Aa.isInPhase3) {
-                            enterPhase3();
-                        }
-                        if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 3 && !Aa.isInPhase4) {
-                            enterPhase4();
-                        }
-                        break;
-                    case TAB:
-                        System.out.println("tab");
-                        Timeline freeze = freeze(game, gamePane);
-                        if (freeze == null){
-                            break;
-                        }
+                if (keyEvent.getCode().getName().equals(shootingKey)) {
+                    System.out.println("space");
+                    if (game.isGameOver()) {
+                        return;
+                    }
+                    gameMenu.setRemainingBallsText("Remaining balls: " + --remainingBalls);
+                    System.out.println("space");
+                    MediaPlayer mediaPlayer = new MediaPlayer(knifeEffect);
+                    mediaPlayer.play();
+                    ShootingAnimation shootingAnimation = new ShootingAnimation(
+                            controller, game, gamePane, central, game.getCurrentBall());
+                    shootingAnimation.play();
+                    game.nextBall();
+                    game.initBall(gamePane);
+                    if ((numberOfPins - remainingBalls) * 4 >= numberOfPins && !Aa.isInPhase2) {
+                        enterPhase2();
+                    }
+                    if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 2 && !Aa.isInPhase3) {
+                        enterPhase3();
+                    }
+                    if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 3 && !Aa.isInPhase4) {
+                        enterPhase4();
+                    }
+                } else if (keyEvent.getCode().getName().equals(freezingKey)) {
+                    System.out.println("tab");
+                    Timeline freeze = freeze(game, gamePane);
+                    if (freeze != null){
                         game.setFreezeTimeline(freeze);
                         freeze.play();
-                        break;
-                    case ESCAPE:
-                        System.out.println("escape");
-                        isPaused = true;
-                        if (game.getAnimation() != null)game.getAnimation().pause();
-                        if (game.getSwellTimeline() != null)game.getSwellTimeline().pause();
-                        if (game.getFadeTimeline() != null)game.getFadeTimeline().pause();
-                        if (game.getFreezeTimeline() != null)game.getFreezeTimeline().pause();
-                        pause();
-                        break;
-                    case X:
-                        System.out.println("x");
-                        reverse(game, gamePane);
-                        break;
-                    case V:
-                        System.out.println("v");
-                        speedUp(game, gamePane);
-                        break;
-                    case C:
-                        System.out.println("c");
-                        speedDown(game, gamePane);
-                        break;
-                    case A:
-                        System.out.println("a");
-                        game.setAngle(game.getAngle() - 5);
-                        break;
-                    case D:
-                        System.out.println("d");
-                        game.setAngle(game.getAngle() + 5);
-                        break;
-                    case Q:
-                        System.out.println("q");
-                        enterPhase1();
-                        break;
-                    case W:
-                        System.out.println("w");
-                        enterPhase2();
-                        break;
-                    case E:
-                        System.out.println("e");
-                        enterPhase3();
-                        break;
-
+                    }
+                } else if (keyEvent.getCode().getName().equals(pauseKey)) {
+                    System.out.println("escape");
+                    isPaused = true;
+                    if (game.getAnimation() != null)game.getAnimation().pause();
+                    if (game.getSwellTimeline() != null)game.getSwellTimeline().pause();
+                    if (game.getFadeTimeline() != null)game.getFadeTimeline().pause();
+                    if (game.getFreezeTimeline() != null)game.getFreezeTimeline().pause();
+                    pause();
                 }
             }
         });
