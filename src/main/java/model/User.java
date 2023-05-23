@@ -53,6 +53,10 @@ public class User {
         this.pauseKey = pauseKey;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public boolean isPasswordCorrect(String password) {
         return this.password.equals(password);
     }
@@ -62,4 +66,7 @@ public class User {
     }
 
 
+    public void setPassword(String text) {
+        this.password = text;
+    }
 }

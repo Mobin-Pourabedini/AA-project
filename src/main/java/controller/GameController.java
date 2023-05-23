@@ -380,6 +380,9 @@ public class GameController {
     }
 
     public void endGame() throws IOException {
+        if (game.getDegreeTimeline() != null) {
+            game.getDegreeTimeline().stop();
+        }
         Label label = new Label("Score: " + score + "\npress enter to continue");
         label.setFont(new Font("Arial", 20));
         label.setLayoutX(Aa.SCENE_SIZE / 2 - 100);

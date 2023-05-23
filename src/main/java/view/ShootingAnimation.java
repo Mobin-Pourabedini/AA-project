@@ -53,6 +53,9 @@ public class ShootingAnimation extends Transition {
             }
         }
         if (GameController.checkIntersection(movingBall, fakeBall)) {
+            game.addBall(movingBall);
+            controller.addToScore();
+            controller.addToProgress();
             if (game.isLastBall(movingBall)) {
                 try {
                     controller.wonGame();
@@ -60,9 +63,6 @@ public class ShootingAnimation extends Transition {
                     throw new RuntimeException(e);
                 }
             }
-            game.addBall(movingBall);
-            controller.addToScore();
-            controller.addToProgress();
             this.stop();
             isDone = true;
             game.getAnimation().stop();
