@@ -86,6 +86,16 @@ public class StartGameMenu extends Application {
             }
         });
         gridPane.add(startGameButton, 0, 4);
+        Button backButton = new Button("back");
+        backButton.setOnMouseClicked(event -> {
+            try {
+                MainMenu mainMenu = new MainMenu(loggedInUser);
+                mainMenu.start(stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        gridPane.add(backButton, 0, 5);
         hBox.getChildren().add(gridPane);
         pane.getChildren().add(hBox);
         Scene scene = new Scene(pane);

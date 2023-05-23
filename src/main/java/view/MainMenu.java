@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.Aa;
 import model.User;
 
 public class MainMenu extends Application {
@@ -36,6 +38,20 @@ public class MainMenu extends Application {
             }
         });
         Button loadGameButton = new Button("Continue playing");
+        loadGameButton.setOnAction((ActionEvent event) -> {
+            if (Aa.getSavedGame() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("No saved game found!");
+                alert.show();
+                return;
+            }
+            try {
+                GameMenu gameMenu = new GameMenu(Aa.getSavedGame());
+                gameMenu.start(LoginMenu.stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         Button profileButton = new Button("Profile");
         profileButton.setOnAction((ActionEvent event) -> {
             try {

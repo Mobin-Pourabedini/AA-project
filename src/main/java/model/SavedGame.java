@@ -7,6 +7,7 @@ public class SavedGame {
     private int remainingBalls;
     private int numberOfPins;
     private List<Integer> gameMap;
+    private int difficulty, score;
 
     public SavedGame(int phaseNum, int remainingBalls, int numberOfPins, List<Integer> gameMap) {
         this.phaseNum = phaseNum;
@@ -29,5 +30,13 @@ public class SavedGame {
 
     public List<Integer> getGameMap() {
         return gameMap;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

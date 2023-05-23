@@ -1,7 +1,9 @@
 package model;
 
+import controller.GameController;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import view.GameMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +21,10 @@ public class Aa {
     public static boolean isInPhase3 = false;
     public static boolean isInPhase4 = false;
 
+    private static GameController gameController;
+
     private static Media media = new Media(Aa.class.getResource("/media/music0.mp3").toString());
     private static MediaPlayer mediaPlayer = new MediaPlayer(media);
-
-    private static SavedGame savedGame;
 
 
     public static void addUser(User user) {
@@ -35,6 +37,10 @@ public class Aa {
 
     public static void addGameMap(List<Integer> map) {
         gameMaps.add(map);
+    }
+
+    public static GameController getSavedGame() {
+        return gameController;
     }
 
     public static List<List<Integer>> getGameMaps() {
@@ -80,5 +86,9 @@ public class Aa {
 
     public static void unmuteMusic() {
         mediaPlayer.setMute(false);
+    }
+
+    public static void saveGame(GameController controller) {
+        gameController = controller;
     }
 }

@@ -30,11 +30,12 @@ public class GameController {
     private Game game;
     private Pane gamePane;
     private Media knifeEffect = new Media(getClass().getResource("/media/knifeEffect.mp3").toExternalForm());
-    private int remainingBalls;
+    private int remainingBalls, phaseNumber = 1;
     private final int numberOfPins, difficulty, mapIndex;
     private boolean gameOver = false, isPaused = false;
     private Ball central;
     private GameMenu gameMenu;
+    private double freezePower = 0.0;
 
     public GameController(GameMenu gameMenu, User loggedInUser, Pane gamePane, int numberOfPins, int difficulty, int mapIndex) {
         this.loggedInUser = loggedInUser;
@@ -49,7 +50,7 @@ public class GameController {
 
     public Game createGame(int movementSpeed) {
         List<Integer> list = Aa.getGameMap(mapIndex);
-        Game game = new Game(numberOfPins, movementSpeed);
+        this.game = new Game(numberOfPins, movementSpeed);
         for (int pos : list) {
             Ball ball = new Ball(Aa.BALL_RADIOS);
             gamePane.getChildren().add(ball);
@@ -62,7 +63,7 @@ public class GameController {
         animation.play();
         game.setAnimation(animation);
         game.initBall(gamePane);
-        enterPhase1(game, gamePane);
+        enterPhase1();
         return game;
     }
 
@@ -93,13 +94,13 @@ public class GameController {
                         game.nextBall();
                         game.initBall(gamePane);
                         if ((numberOfPins - remainingBalls) * 4 >= numberOfPins && !Aa.isInPhase2) {
-                            enterPhase2(game, gamePane);
+                            enterPhase2();
                         }
                         if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 2 && !Aa.isInPhase3) {
-                            enterPhase3(game, gamePane);
+                            enterPhase3();
                         }
                         if ((numberOfPins - remainingBalls) * 4 >= numberOfPins * 3 && !Aa.isInPhase4) {
-                            enterPhase4(game, gamePane);
+                            enterPhase4();
                         }
                         break;
                     case TAB:
@@ -142,15 +143,15 @@ public class GameController {
                         break;
                     case Q:
                         System.out.println("q");
-                        enterPhase1(game, gamePane);
+                        enterPhase1();
                         break;
                     case W:
                         System.out.println("w");
-                        enterPhase2(game, gamePane);
+                        enterPhase2();
                         break;
                     case E:
                         System.out.println("e");
-                        enterPhase3(game, gamePane);
+                        enterPhase3();
                         break;
 
                 }
@@ -191,30 +192,33 @@ public class GameController {
         game.setAnimation(animation);
     }
 
-    public void enterPhase1(Game game, Pane pane) {
+    public void enterPhase1() {
         Aa.isInPhase1 = true;
-        game.setReverseTimeline(reverseTimeline(game, pane));
+        game.setReverseTimeline(reverseTimeline(game, gamePane));
         game.getReverseTimeline().play();
     }
 
-    public void enterPhase2(Game game, Pane pane) {
+    public void enterPhase2() {
         Aa.isInPhase2 = true;
+        phaseNumber = 2;
         gameMenu.setPhaseLabel("Phase 2");
-        game.setSwellTimeline(swellTimeline(game, pane));
+        game.setSwellTimeline(swellTimeline(game, gamePane));
         game.getSwellTimeline().play();
     }
 
-    public void enterPhase3(Game game, Pane pane) {
+    public void enterPhase3() {
         Aa.isInPhase3 = true;
+        phaseNumber = 3;
         gameMenu.setPhaseLabel("Phase 3");
-        game.setFadeTimeline(fadeTimeline(game, pane));
+        game.setFadeTimeline(fadeTimeline(game, gamePane));
         game.getFadeTimeline().play();
     }
 
-    public void enterPhase4(Game game, Pane pane) {
+    public void enterPhase4() {
         Aa.isInPhase4 = true;
+        phaseNumber = 4;
         gameMenu.setPhaseLabel("Phase 4");
-        game.setDegreeTimeline(degreeTimeline(game, pane));
+        game.setDegreeTimeline(degreeTimeline(game, gamePane));
         game.getDegreeTimeline().play();
     }
 
@@ -342,6 +346,7 @@ public class GameController {
 
     public Timeline freeze(Game game, Pane gamePane) {
         if (gameMenu.checkFreeze()) {
+            freezePower = 0;
             Paint prevPaint = central.getFill();
             return new Timeline(new KeyFrame(Duration.ZERO, event -> {
                 Media media = new Media(getClass().getResource("/media/freezeEffect.mp3").toString());
@@ -394,6 +399,9 @@ public class GameController {
 
     public void addToProgress() {
         gameMenu.addToProgress();
+        if (freezePower < 1) {
+            freezePower += 0.1001;
+        }
     }
 
     public void pause() {
@@ -440,7 +448,10 @@ public class GameController {
         });
         pane.getChildren().add(exit);
         Button save = new Button("Save");
-
+        save.setOnAction(event -> {
+            saveGame();
+        });
+        pane.getChildren().add(save);
         popup.setX(450);
         popup.setY(200);
         popup.show(LoginMenu.stage);
@@ -455,6 +466,38 @@ public class GameController {
     }
 
     public void saveGame() {
+        Aa.saveGame(this);
+    }
 
+    public Ball getCentral() {
+        return central;
+    }
+
+    public int getRemainingBalls() {
+        return remainingBalls;
+    }
+
+    public double getFreezePower() {
+        return freezePower;
+    }
+
+    public int getPhase() {
+        return phaseNumber;
+    }
+
+    public Pane getPane() {
+        return gamePane;
+    }
+
+    public void setPane(Pane gamePane) {
+        this.gamePane = gamePane;
+    }
+
+    public void resumeGame() {
+        if (game.getAnimation() != null)game.getAnimation().play();
+        if (game.getSwellTimeline() != null)game.getSwellTimeline().play();
+        if (game.getFadeTimeline() != null)game.getFadeTimeline().play();
+        if (game.getFreezeTimeline() != null)game.getFreezeTimeline().play();
+        isPaused = false;
     }
 }
